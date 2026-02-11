@@ -1,0 +1,53 @@
+@startuml components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram
+
+Container_Boundary(main_service, "Main Service") {
+
+  Component(rest_controller, "REST Controllers","Spring MVC","Обрабатывают HTTP-запросы от Telegram Bot и Admin UI")
+
+  Component(user_service, "User Service","Service Layer","Управление пользователями")
+
+  Component(subscription_service, "Subscription Service","Service Layer","Логика подписок и их жизненного цикла")
+
+  Component(billing_service, "Billing Service","Service Layer","Обработка платежей и расчётов")
+
+  Component(tariff_service, "Tariff Service","Service Layer","Управление тарифными планами")
+
+  Component(access_orchestrator, "Access Orchestrator","Application Service","Публикация событий для Connect Service")
+
+  Component(kafka_producer, "Kafka Producer","Spring Kafka","Отправка событий в Kafka")
+
+  Component(kafka_listener, "Kafka Listener","Spring Kafka","Обработка событий от Connect Service")
+
+  Component(repository_layer, "Repositories","Spring Data JPA","Доступ к базе данных")
+
+}
+
+ContainerDb(main_db, "Main Database", "PostgreSQL")
+
+Container(kafka, "Kafka", "Message Broker")
+
+Rel(rest_controller, user_service, "Вызывает")
+Rel(rest_controller, subscription_service, "Вызывает")
+Rel(rest_controller, billing_service, "Вызывает")
+Rel(rest_controller, tariff_service, "Вызывает")
+
+Rel(subscription_service, access_orchestrator, "Инициирует выдачу/отзыв доступа")
+
+Rel(access_orchestrator, kafka_producer, "Публикует события")
+
+Rel(kafka_listener, subscription_service, "Обрабатывает события обновления трафика и отметку об использовании")
+
+Rel(user_service, repository_layer, "CRUD")
+Rel(subscription_service, repository_layer, "CRUD")
+Rel(billing_service, repository_layer, "CRUD")
+Rel(tariff_service, repository_layer, "CRUD")
+
+Rel(repository_layer, main_db, "JPA")
+
+Rel(kafka_producer, kafka, "Publish")
+Rel(kafka, kafka_listener, "Consume")
+
+@enduml

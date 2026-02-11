@@ -1,0 +1,58 @@
+@startuml containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнеров
+
+Person(user, "Пользователь")
+Person(admin, "Администратор")
+Person(support, "Сотрудник поддержки")
+
+System_Ext(telegram, "Telegram API")
+System_Ext(payment, "Платёжные сервисы")
+System_Ext(vpn_nodes, "VPN серверы (3x-ui)")
+System_Ext(client_apps, "Клиентские приложения")
+
+System_Boundary(system, "Сервис") {
+
+  Container(bot, "Telegram Bot","Spring Boot","Интерфейс взаимодействия пользователя")
+
+  Container(admin_ui, "Web Admin UI","Web Application","Административный интерфейс")
+
+  Container(main_service, "Main Service","Spring Boot","Биллинг, пользователи, подписки, тарифы")
+
+  ContainerDb(main_db, "Main Database","PostgreSQL","Пользователи, подписки, биллинг")
+
+  Container(connect_service, "Connect Service","Spring Boot","Управление VPN-доступами")
+
+  Container(connect_jobs, "Connect Service Jobs","Spring Boot","Подсчёт трафика, фоновые задачи")
+
+  ContainerDb(connect_db, "Connect Database","PostgreSQL","Доступы, сервера, трафик")
+
+  Container(kafka, "Kafka","Message Broker","Асинхронное взаимодействие сервисов")
+}
+
+Rel(user, bot, "Использует")
+Rel(admin, admin_ui, "Использует")
+Rel(support, admin_ui, "Использует")
+
+Rel(bot, telegram, "Bot API")
+Rel(main_service, payment, "API платежей")
+Rel(connect_service, vpn_nodes, "API 3x-ui")
+Rel(client_apps, connect_service, "Публичный API")
+
+Rel(bot, main_service, "REST API")
+Rel(admin_ui, main_service, "REST API")
+
+Rel(main_service, main_db, "CRUD")
+Rel(connect_service, connect_db, "CRUD")
+Rel(connect_jobs, connect_db, "Чтение/обновление трафика")
+
+Rel(main_service, kafka, "Публикует события\n(создание/отзыв доступа)")
+Rel(connect_service, kafka, "Подписывается на события")
+
+Rel(connect_service, kafka, "Публикует события\n(статус доступа)")
+Rel(connect_jobs, kafka, "Публикует события\n(обновление трафика)")
+
+Rel(kafka, main_service, "Доставка событий")
+
+@enduml

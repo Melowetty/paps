@@ -1,0 +1,36 @@
+@startuml System context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Диаграмма системного контекста\nСистема управления доступом
+
+Person(user, "Пользователь", "Оформляет подписку, получает параметры доступа и подключается к серверам")
+
+Person(support, "Сотрудник поддержки", "Обрабатывает обращения пользователей")
+
+Person(admin, "Администратор", "Управляет пользователями, серверами и тарифами")
+
+Person(owner, "Владелец продукта", "Получает аналитическую информацию о работе системы")
+
+System(system, "Система управления доступом","Управление подписками, доступами и серверами")
+
+System_Ext(telegram, "Telegram API","Обеспечивает взаимодействие через Telegram-бота")
+
+System_Ext(payment, "Платёжные сервисы","Обработка разовых и рекуррентных платежей")
+
+System_Ext(vpn_nodes, "Удалённые серверы (VPN узлы)","Предоставляют сетевой доступ пользователям")
+
+System_Ext(client_apps, "Клиентские приложения","Используются пользователями для подключения")
+
+Rel(user, system, "Использует через Telegram-бот")
+Rel(user, client_apps, "Подключается через")
+
+Rel(support, system, "Работает через веб-интерфейс")
+Rel(admin, system, "Администрирует через веб-интерфейс")
+Rel(owner, system, "Просматривает аналитику")
+
+Rel(system, telegram, "Использует Telegram Bot API")
+Rel(system, payment, "Интеграция для приёма платежей")
+Rel(system, vpn_nodes, "Управляет доступами и конфигурациями")
+Rel(client_apps, system, "Обращаются к публичному API")
+
+@enduml
