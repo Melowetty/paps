@@ -1,0 +1,51 @@
+@startuml sequence
+title Sequence Diagram\nОформление подписки
+
+actor User
+participant "Telegram Bot" as Bot
+participant "Main Service\nREST Controller" as Controller
+participant "Subscription Service" as SubService
+participant "Billing Service" as Billing
+database "Main DB" as DB
+participant "Payment Provider" as Payment
+participant "Kafka" as Kafka
+participant "Connect Service" as Connect
+
+== Инициация оформления ==
+
+User -> Bot : Выбрать тариф
+Bot -> Controller : POST /subscriptions
+
+Controller -> SubService : createSubscription(user, tariff)
+
+SubService -> DB : Сохранить подписку\n(status=WAITING_PAYMENT)
+DB --> SubService : OK
+
+SubService -> Billing : createPayment(subscription)
+Billing -> Payment : Создать платёж
+Payment --> Billing : payment_url
+
+Billing --> SubService : payment_url
+SubService --> Controller : payment_url
+Controller --> Bot : payment_url
+Bot --> User : Ссылка на оплату
+
+== Подтверждение оплаты ==
+
+Payment -> Controller : Webhook (payment success)
+
+Controller -> Billing : confirmPayment(data)
+Billing -> DB : Обновить статус платежа
+Billing --> Controller : OK
+
+Controller -> SubService : activateSubscription(subscriptionId)
+
+SubService -> DB : Обновить статус\n(ACTIVE)
+
+SubService -> Kafka : Publish CreateClient
+
+Kafka -> Connect : CreateClient event
+
+Connect -> Connect : Выдача доступа\nна VPN-сервере
+
+@enduml
