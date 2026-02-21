@@ -24,6 +24,10 @@
 
 ## Список Лабораторных работ
 - [#1](/labs/1/README.md)
+- [#2](/labs/2/README.md)
+- [#3](/labs/3/README.md)
+- [#4](/labs/4/README.md)
+- [#5](/labs/5/README.md)
 
 ## Автор
 Малинин Денис РИС-22-1
