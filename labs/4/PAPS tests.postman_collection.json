@@ -1,0 +1,399 @@
+{
+  "info": {
+    "_postman_id": "b74d0ed6-9664-47e0-962d-70126cd5629f",
+    "name": "PAPS tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29065172"
+  },
+  "item": [
+    {
+      "name": "Promo",
+      "item": [
+        {
+          "name": "Get promo",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Create promo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Promo saved\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"code\");",
+                  "  pm.environment.set(\"createdPromoCode\", json.code);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{ADMIN_PASSWORD}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{ADMIN_USERNAME}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"FRIDAY\",\n    \"duration\": \"P7D\",\n    \"nextRateId\": 1,\n    \"isDisposable\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_PATH}}/promo",
+              "host": [
+                "{{BASE_PATH}}"
+              ],
+              "path": [
+                "promo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete promo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"PromoCode exists\", function () {",
+                  "  pm.expect(pm.environment.get(\"createdPromoCode\")).to.be.ok;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{ADMIN_PASSWORD}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{ADMIN_USERNAME}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_PATH}}/promo/{{createdPromoCode}}",
+              "host": [
+                "{{BASE_PATH}}"
+              ],
+              "path": [
+                "promo",
+                "{{createdPromoCode}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rates",
+      "item": [
+        {
+          "name": "Get available rates",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array\", function () {",
+                  "  const arr = pm.response.json();",
+                  "  pm.expect(arr).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{ADMIN_PASSWORD}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{ADMIN_USERNAME}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_PATH}}/rate",
+              "host": [
+                "{{BASE_PATH}}"
+              ],
+              "path": [
+                "rate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create new rate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Created rate saved\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"id\");",
+                  "  pm.environment.set(\"createdRateId\", String(json.id));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{ADMIN_PASSWORD}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{ADMIN_USERNAME}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"duration\": \"P1M\",\n    \"cost\": 49900,\n    \"type\": \"PUBLIC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_PATH}}/rate",
+              "host": [
+                "{{BASE_PATH}}"
+              ],
+              "path": [
+                "rate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete rate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"RateId exists\", function () {",
+                  "  pm.expect(pm.environment.get(\"createdRateId\")).to.be.ok;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{ADMIN_PASSWORD}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{ADMIN_USERNAME}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{BASE_PATH}}/rate/{{createdRateId}}",
+              "host": [
+                "{{BASE_PATH}}"
+              ],
+              "path": [
+                "rate",
+                "{{createdRateId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "Get subscription traffic history",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Change duration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Subscription has id\", function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"id\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{ADMIN_PASSWORD}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{ADMIN_USERNAME}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"duration\": \"P36M\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_PATH}}/subscriptions/{{subscriptionId}}/duration",
+              "host": [
+                "{{BASE_PATH}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{subscriptionId}}",
+                "duration"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
