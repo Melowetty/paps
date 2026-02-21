@@ -1,0 +1,59 @@
+@startuml UseCases
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #FDFDFD
+  BorderColor black
+}
+
+actor "Пользователь" as User
+actor "Сотрудник поддержки" as Support
+actor "Администратор" as Admin
+actor "Владелец продукта" as Owner
+
+Admin --|> Support
+Owner --|> Admin
+
+rectangle "Система управления доступом" {
+
+  (Просмотреть профиль) as UC_ViewProfile
+  (Оформить подписку) as UC_Subscribe
+  (Продлить подписку) as UC_Renew
+  (Оплатить подписку) as UC_Pay
+  (Получить параметры подключения) as UC_GetConfig
+  (Просмотреть статус подписки) as UC_Status
+  (Обратиться в поддержку) as UC_RequestSupport
+
+  (Просмотреть пользователя) as UC_ViewUser
+  (Обработать обращение) as UC_HandleTicket
+
+  (Изменить данные пользователя) as UC_EditUser
+  (Управлять тарифами) as UC_Tariffs
+  (Управлять серверами) as UC_Servers
+  (Просмотреть статистику) as UC_Stats
+
+  (Просмотреть агрегированную аналитику) as UC_Analytics
+}
+
+User --> UC_ViewProfile
+User --> UC_Subscribe
+User --> UC_Renew
+User --> UC_GetConfig
+User --> UC_Status
+User --> UC_RequestSupport
+
+UC_Subscribe --> UC_Pay : <<include>>
+UC_Renew --> UC_Pay : <<include>>
+
+Support --> UC_ViewUser
+Support --> UC_HandleTicket
+UC_RequestSupport --> UC_HandleTicket : <<include>>
+
+Admin --> UC_EditUser
+Admin --> UC_Tariffs
+Admin --> UC_Servers
+Admin --> UC_Stats
+
+Owner --> UC_Analytics
+
+@enduml
